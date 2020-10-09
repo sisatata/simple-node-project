@@ -18,8 +18,11 @@
   },
   "homepage": "https://github.com/sisatata/simple-node-project#readme",
   "dependencies": {
+    "custom-env": "^2.0.1",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.10.8",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
