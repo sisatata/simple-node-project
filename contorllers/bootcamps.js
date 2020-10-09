@@ -4,8 +4,9 @@ const Bootcamp = require('../models/Bootcamp');
 // @route   Get/api/v1/bootcamps
 // @access  public
 
-exports.getBootcamps = (req, res, next) => {
-    res.status(200).json({success: true, msg: 'Show all '});
+exports.getBootcamps = async (req, res, next) => {
+    const bootcamps = await Bootcamp.find();
+    res.status(200).json({success: true, msg: bootcamps});
 
 }
 
