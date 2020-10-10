@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bootcamps = require('../simple-node-project/routes/bootcamps');
 const connectDB = require('../simple-node-project/config/db');
+const errorHandler = require('../simple-node-project/middleware/error')
 //const connectDB = require('../simple-node-project/config/config.env');
 
 dotenv.config({path: '../simple-node-project/config/config.env'});
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === 'development ') {
 }
 
 app.use('/api/v1/bootcamps', bootcamps);
+app.use(errorHandler);
 app.get('/', (req, res) => {
 
     res.status(200).json({success: true, data: {name: 'stata', age: 21}});
