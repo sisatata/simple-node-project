@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// Bootcmap model
 const BootcampShema = new mongoose.Schema({
     name: {
         type: String,

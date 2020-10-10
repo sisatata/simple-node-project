@@ -30,12 +30,3 @@ app.listen(
     console.log('sever running')
 );
 
-/*  neccessary shortcuts for webstorm
-*  shift + shift
-*  F2
-* ctrl + e
-* ctrl  + w
-*  shift + F6
-* ctrl + alt + S
-*
-* */
