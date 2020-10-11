@@ -55,7 +55,6 @@ const BootcampShema = new mongoose.Schema({
         zipcode: String,
         country: String
     },
-
     careers: {
         type: [String],
         required: true,
@@ -94,12 +93,14 @@ const BootcampShema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+}, {
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
 });
 BootcampShema.pre('save', function (next) {
-    this.slug = slugify(this.name,{lower: true});
+    this.slug = slugify(this.name, {lower: true});
     next();
 });
-
 // BootcampShema.pre('save', async function (next) {
 //     const loc = await  geocoder.geocode(this.address);
 //  //   console.log('safas');
@@ -119,4 +120,14 @@ BootcampShema.pre('save', function (next) {
 //     next();
 //
 // })
+BootcampShema.pre('remove', async function (next) {
+    await this.model('Course').deleteMany({bootcamp: this._id});
+    next();
+})
+BootcampShema.virtual('courses', {
+    ref: 'Course',
+    localField: '_id',
+    foreignField: 'bootcamp',
+    justOne: false
+})
 module.exports = mongoose.model('Bootcamp', BootcampShema);
