@@ -9,7 +9,7 @@ const errorHandler = (err, req, res, next) => {
    // console.log(error,'oh no')
 
     //:
-    console.log(error, 'here i am');
+   // console.log(error, 'here i am');
     if (err.name === 'CastError' || error.statusCode === 404) {
         const message = error.message;
         error = new ErrorResponse(message, 404);
