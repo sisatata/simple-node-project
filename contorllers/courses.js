@@ -7,22 +7,17 @@ const Bootcamp = require('../models/Bootcamp');
 // @route   GET/api/v1/bootcmps/:bootcampId/courses
 // @access  public
 exports.getCourses = asyncHandler(async (req, res, next) => {
-    let query;
-    console.log(req.params);
     if (req.params.bootcampId) {
-        query = Course.find({bootcamp: req.params.bootcampId})
-    } else {
-        query = Course.find().populate({
-            path: 'bootcamp',
-            select: 'name description'
+        const courses = await Course.find({bootcamp: req.params.bootcampId});
+        return res.status(200).json({
+            success: true,
+            count: courses.length,
+            data: courses
         });
+    } else {
+
+        res.status(200).json(res.advancedResults);
     }
-    const courses = await query;
-    res.status(200).json({
-        success: true,
-        length: courses.length,
-        data: courses
-    });
 });
 // @desc    get single course
 // @route   GET/api/v1/course/:id
@@ -34,7 +29,7 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
         select: 'name description'
     });
     if (!course) {
-        console.log(course,'single course',req.params.id);
+        console.log(course, 'single course', req.params.id);
         return next(new ErrorResponse(`resource not found with the id ${req.params.id}`, 404));
     }
     res.status(200).json({
@@ -86,11 +81,10 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
     const course = await Course.findById(req.params.id);
     console.log(course)
     if (!course) {
-       // console.log(';fasfdas')
+        // console.log(';fasfdas')
         return next(new ErrorResponse(`resource not found with the id ${req.params.id}`, 404));
     }
     await course.remove();
-
     res.status(200).json({
         success: true,
         data: {}
