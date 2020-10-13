@@ -7,7 +7,9 @@ const Bootcamp = require('../models/Bootcamp');
 // @route   GET/api/v1/bootcmps/:bootcampId/courses
 // @access  public
 exports.getCourses = asyncHandler(async (req, res, next) => {
+
     if (req.params.bootcampId) {
+
         const courses = await Course.find({bootcamp: req.params.bootcampId});
         return res.status(200).json({
             success: true,
@@ -15,7 +17,7 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
             data: courses
         });
     } else {
-
+        console.log('from course')
         res.status(200).json(res.advancedResults);
     }
 });

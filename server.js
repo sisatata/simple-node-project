@@ -4,13 +4,15 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
 const mongoose = require('mongoose');
-const bootcamps = require('../simple-node-project/routes/bootcamps');
-const courses = require('../simple-node-project/routes/courses');
+
 const connectDB = require('../simple-node-project/config/db');
 const errorHandler = require('../simple-node-project/middleware/error')
 //const connectDB = require('../simple-node-project/config/config.env');
 dotenv.config({path: '../simple-node-project/config/config.env'});
 connectDB();
+const bootcamps = require('./routes/bootcamps');
+const courses = require('./routes/courses');
+const auth = require('./routes/auth');
 console.log(process.env.PORT)
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -23,6 +25,7 @@ app.use(fileupload());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
+app.use('/api/v1/auth', auth);
 app.use(errorHandler);
 app.get('/', (req, res) => {
     res.status(200).json({success: true, data: {name: 'stata', age: 21}});

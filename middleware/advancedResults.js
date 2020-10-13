@@ -1,4 +1,5 @@
-const  advancedResults = (model, populate) => async (req,res,next) =>{
+const advancedResults = (model, populate) => async (req, res, next) => {
+    console.log('from advancde')
     let query;
     let reqQuery = {...req.query};
     // remove from query
@@ -51,8 +52,5 @@ const  advancedResults = (model, populate) => async (req,res,next) =>{
         data: results
     }
     next();
-
-
 };
-
 module.exports = advancedResults;
