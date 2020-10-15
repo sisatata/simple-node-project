@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const connectDB = require('../simple-node-project/config/db');
 const errorHandler = require('../simple-node-project/middleware/error')
-//const connectDB = require('../simple-node-project/config/config.env');
 dotenv.config({path: '../simple-node-project/config/config.env'});
 connectDB();
 const bootcamps = require('./routes/bootcamps');

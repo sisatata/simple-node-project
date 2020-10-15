@@ -7,13 +7,15 @@ const path = require('path');
 // @route   Get/api/v1/bootcamps
 // @access  public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
+    console.log(req.params);
     res.status(200).json(res.advancedResults);
 });
 // @desc    show single bootcamp
 // @route   Get/api/v1/bootcamps/:id
 // @access  public
 exports.getBootcamp = asyncHandler(async (req, res, next) => {
-    console.log(req.params.id);
+    console.log(req.body);
+
     const bootcamp = await Bootcamp.findById(req.params.id);
     if (!bootcamp) {
         return next(new ErrorResponse(`resource not found with the id ${req.params.id}`, 404));

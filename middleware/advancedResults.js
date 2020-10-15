@@ -1,5 +1,6 @@
 const advancedResults = (model, populate) => async (req, res, next) => {
-    console.log('from advancde')
+    console.log(req.body)
+    console.log(req.query)
     let query;
     let reqQuery = {...req.query};
     // remove from query
