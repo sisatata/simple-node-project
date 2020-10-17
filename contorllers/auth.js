@@ -2,6 +2,7 @@ const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const advancedResults = require('../middleware/advancedResults');
 const sendEmail = require('../utils/sendEmail');
+const crypto = require('crypto');
 const User = require('../models/User');
 // @desc    register user
 // @route   Post/api/v1/auth/register
@@ -73,20 +74,22 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     }
     //console.log('forgot pass')
     const resetToken = user.getResetPassword();
+    console.log(resetToken, 'from forgotpass');
     // console.log(resetToken)
     await user.save({validateBeforeSave: false});
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/resetpassword/${resetToken}`;
+    console.log(resetToken, 'after forgot')
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
     const message = `Please change password via this url.\n\n${resetUrl}`;
     console.log(resetUrl)
     try {
         await sendEmail({
             to: 'sadiqul842@gmail.com',
             subject: 'Reset password token',
-            text:'ok ok ok'
+            text: resetUrl
         });
         res.status(200).json({success: true, message: 'Email Sent'});
     } catch (e) {
-        console.log(e);
+        // console.log(e);
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined,
             await user.save({validateBeforeSave: false});
@@ -97,4 +100,58 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
         success: true,
         data: user
     })
+});
+// @desc    get current user
+// @route   PGET/api/v1/auth/me
+// @access  private
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+    console.log(req.params.resettoken);
+    //
+    const resetPasswordToken = crypto.createHash('sha256')
+        .update(req.params.resettoken)
+        .digest('hex');
+    console.log(resetPasswordToken);
+    const user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: {$gt: Date.now()}
+    });
+    console.log(user);
+    if (!user) {
+        return next(new ErrorResponse('Invalid token', 400));
+    }
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+    sendTokenResponse(user, 200, res);
+});
+// @desc    update current user
+// @route   PUT/api/v1/auth/me
+// @access  private
+exports.updateDetails = asyncHandler(async (req, res, next) => {
+    console.log(req.user, 'req.user')
+    const fieldsToUpdate = {
+        name: req.body.name,
+        emial: req.body.email
+    }
+    const user = await User.findById(req.user.id, fieldsToUpdate, {
+        new: true,
+        runValidators: true
+    });
+    res.status(200).json({
+        success: true,
+        data: user
+    })
+});
+// @desc    update Password
+// @route   Put/api/v1/auth/me
+// @access  private
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user.id).select('+password');
+    if (!(await user.matchPassword(req.body.currentPassword))) {
+        return next(new ErrorResponse('Invalid id', 400));
+    }
+    user.password = req.body.newPassword;
+    await user.save();
+    sendTokenResponse(user, 200, res);
 });
