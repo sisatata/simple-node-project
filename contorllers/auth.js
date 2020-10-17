@@ -1,6 +1,7 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const advancedResults = require('../middleware/advancedResults');
+const sendEmail = require('../utils/sendEmail');
 const User = require('../models/User');
 // @desc    register user
 // @route   Post/api/v1/auth/register
@@ -66,13 +67,32 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
     console.log(req.body.email)
     const user = await User.findOne({email: req.body.email});
-    console.log(user)
+    // console.log(user)
     if (!user) {
         return next(new ErrorResponse(`There is no user with this emial`, 401));
     }
+    //console.log('forgot pass')
     const resetToken = user.getResetPassword();
+    // console.log(resetToken)
     await user.save({validateBeforeSave: false});
-    console.log(resetToken)
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/resetpassword/${resetToken}`;
+    const message = `Please change password via this url.\n\n${resetUrl}`;
+    console.log(resetUrl)
+    try {
+        await sendEmail({
+            to: 'sadiqul842@gmail.com',
+            subject: 'Reset password token',
+            text:'ok ok ok'
+        });
+        res.status(200).json({success: true, message: 'Email Sent'});
+    } catch (e) {
+        console.log(e);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined,
+            await user.save({validateBeforeSave: false});
+        return next(new ErrorResponse('Email can not be send', 500));
+    }
+    // console.log(resetToken)
     res.status(200).json({
         success: true,
         data: user
