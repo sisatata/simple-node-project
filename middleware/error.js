@@ -6,7 +6,7 @@ const errorHandler = (err, req, res, next) => {
     //console.log(err.name, err.message,err.statusCode,err.value,'try')
    // console.log(error,'oh no')
     error.message = err.message;
-   // console.log(error,'oh no')
+    //console.log(error,'oh no')
 
     //:
    // console.log(error, 'here i am');
