@@ -34,6 +34,11 @@ const CourseShcema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Bootcamp',
         required: true
+    },
+    bootcamp: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: true
     }
 });
 CourseShcema.statics.getAverageCost = async function(bootcampId) {

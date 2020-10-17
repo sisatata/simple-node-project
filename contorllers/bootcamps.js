@@ -49,7 +49,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
         return
         next(new ErrorResponse(`Bootcamp not found with the id ${req.params.id}`, 404));
     }
-    console.log(bootcamp)
+
     if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
         next(new ErrorResponse(`${req.user.id} not authorized to update this bootcamp`, 401));
     }

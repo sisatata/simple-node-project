@@ -53,10 +53,28 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @route   PGET/api/v1/auth/me
 // @access  private
 exports.getMe = asyncHandler(async (req, res, next) => {
+    console.log(req.user)
     const user = await User.findById(req.user.id);
     res.status(200).json({
         success: true,
         data: user
     })
 });
-
+// @desc    forgot password
+// @route   Post/api/v1/auth/foret
+// @access  pulict
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+    console.log(req.body.email)
+    const user = await User.findOne({email: req.body.email});
+    console.log(user)
+    if (!user) {
+        return next(new ErrorResponse(`There is no user with this emial`, 401));
+    }
+    const resetToken = user.getResetPassword();
+    await user.save({validateBeforeSave: false});
+    console.log(resetToken)
+    res.status(200).json({
+        success: true,
+        data: user
+    })
+});
